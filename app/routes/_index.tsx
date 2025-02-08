@@ -1,5 +1,5 @@
 import type { MetaFunction } from "@remix-run/node";
-import { Button } from "~/components/ui/button";
+import { Header } from "~/components/custom/Header/Header";
 
 export const meta: MetaFunction = () => {
   return [
@@ -10,8 +10,8 @@ export const meta: MetaFunction = () => {
 
 export default function Index() {
   return (
-    <div className="text-red-500">
-      <Button>Hello world</Button>
+    <div className="w-full h-screen p-3 bg-background">
+      <Header />
     </div>
   );
 }
