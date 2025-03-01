@@ -4,7 +4,7 @@ import { Theme, useTheme } from "remix-themes";
 import { CircleDollarSign } from "lucide-react";
 
 export const Header = () => {
-  const [, setTheme] = useTheme();
+  const [theme, setTheme] = useTheme();
 
   return (
     <div className="w-full bg-gray-200 p-3 rounded-lg flex items-center justify-between">
@@ -27,8 +27,9 @@ export const Header = () => {
         </TabsList>
       </Tabs>
       <BgSwitch
-        onCheckedChange={(checked) =>
-          checked ? setTheme(Theme.DARK) : setTheme(Theme.LIGHT)
+        checked={theme === "dark" ? true : false}
+        onCheckedChange={() =>
+          theme === "light" ? setTheme(Theme.DARK) : setTheme(Theme.LIGHT)
         }
       />
     </div>
