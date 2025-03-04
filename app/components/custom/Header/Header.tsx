@@ -1,7 +1,7 @@
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { BgSwitch } from "../BgSwitch";
 import { Theme, useTheme } from "remix-themes";
-import { CircleDollarSign } from "lucide-react";
+import { Rocket } from "lucide-react";
 
 export const Header = () => {
   const [theme, setTheme] = useTheme();
@@ -9,11 +9,11 @@ export const Header = () => {
   return (
     <div className="w-full bg-gray-200 p-3 rounded-lg flex items-center justify-between">
       <div className="flex items-center gap-2">
-        <CircleDollarSign className="text-purple-600 animate-spin duration-1000" />
-        <p className="text-purple-600 font-semibold ">Currency</p>
+        <Rocket className="text-blue-600 animate-spin duration-1000" />
+        <p className="text-blue-600 font-semibold ">NASA</p>
       </div>
       <Tabs defaultValue="dashboard" className="w-[400px]">
-        <TabsList className="">
+        <TabsList>
           <TabsTrigger value="dashboard">Dasboard</TabsTrigger>
           <TabsTrigger value="courses" disabled>
             Courses

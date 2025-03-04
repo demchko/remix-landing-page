@@ -1,8 +1,13 @@
-import { json, type MetaFunction } from "@remix-run/node";
-import { LoaderFunction } from "react-router";
+import { LoaderFunction, type MetaFunction } from "@remix-run/node";
 import { Header } from "~/components/custom/Header/Header";
-import { PlnAndEurWidget } from "~/components/UAHWidget/UAHWidget";
+import { DayPhotoWidget } from "~/components/UAHWidget/UAHWidget";
 import axios from "axios";
+import { z } from "zod";
+
+const NasaApodSchema = z.object({
+  title: z.string(),
+  url: z.string().url(),
+});
 
 export const meta: MetaFunction = () => {
   return [
@@ -12,45 +17,11 @@ export const meta: MetaFunction = () => {
 };
 
 export const loader: LoaderFunction = async () => {
-  const oneMonthAgo = new Date();
-  oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 2);
-  const formatDate = (date: Date) => {
-    return date.toISOString().split("T")[0];
-  };
-
-  const twoMonthAgoStr = formatDate(oneMonthAgo);
-
-  const latestPlnToUsdPromise = axios.get(
-    "https://api.frankfurter.dev/v1/latest?base=USD&symbols=PLN"
+  const res = await axios.get(
+    "https://api.nasa.gov/planetary/apod?api_key=Np9nhqQW7CqArwsLRUMH9EXCATWlitVqzCP5IF94"
   );
-  const twoMonthAgoPlnToUsdPromise = axios.get(
-    `https://api.frankfurter.dev/v1/${twoMonthAgoStr}?base=USD&symbols=PLN`
-  );
-  const latestEurToUsdPromise = axios.get(
-    "https://api.frankfurter.dev/v1/latest?base=USD&symbols=EUR"
-  );
-  const twoMonthAgoEurToUsdPromise = axios.get(
-    `https://api.frankfurter.dev/v1/${twoMonthAgoStr}?base=USD&symbols=EUR`
-  );
-
-  const [
-    latestPlnToUsd,
-    twoMonthAgoPlnToUsd,
-    latestEurToUsd,
-    twoMonthAgoEurToUsd,
-  ] = await Promise.all([
-    latestPlnToUsdPromise,
-    twoMonthAgoPlnToUsdPromise,
-    latestEurToUsdPromise,
-    twoMonthAgoEurToUsdPromise,
-  ]);
-
-  return json({
-    plnNow: latestPlnToUsd.data,
-    eurNow: latestEurToUsd.data,
-    previousPln: twoMonthAgoPlnToUsd.data,
-    previousEur: twoMonthAgoEurToUsd.data,
-  });
+  const validatedData = NasaApodSchema.parse(res.data);
+  return validatedData;
 };
 
 export default function Index() {
@@ -58,7 +29,7 @@ export default function Index() {
     <div className="w-full h-screen p-3 bg-background">
       <Header />
       <div className="pt-4">
-        <PlnAndEurWidget />
+        <DayPhotoWidget />
       </div>
     </div>
   );
