@@ -20,8 +20,8 @@ export const DayPhotoWidget = () => {
         <CardContent>
           <img
             className="w-full max-h-[350px] object-contain"
-            src={data?.url}
-            alt={data?.title}
+            src={data?.dayPhoto.url}
+            alt={data?.dayPhoto.title}
           />
         </CardContent>
       </Card>
