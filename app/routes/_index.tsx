@@ -1,5 +1,9 @@
-import { type MetaFunction } from "@remix-run/node";
-import { ContactForm } from "~/components/custom/ContactForm/ContactForm";
+import { ActionFunctionArgs, type MetaFunction } from "@remix-run/node";
+import { z } from "zod";
+import {
+  ContactForm,
+  schema,
+} from "~/components/custom/ContactForm/ContactForm";
 import { ContactInformation } from "~/components/custom/ContactInformation/ContactInformation";
 import { ContactUs } from "~/components/custom/ContactUs/ContactUs";
 import { Footer } from "~/components/custom/Footer/Footer";
@@ -11,6 +15,27 @@ export const meta: MetaFunction = () => {
     { name: "description", content: "Welcome to Remix!" },
   ];
 };
+
+export async function action({ request }: ActionFunctionArgs) {
+  const formData = await request.formData();
+  const formValues = Object.fromEntries(formData);
+
+  try {
+    const validatedData = schema.parse(formValues);
+    return { success: true, email: validatedData.email };
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        errors: error.format(),
+      };
+    }
+    return {
+      success: false,
+      errors: { _form: "Form submission failed" },
+    };
+  }
+}
 
 export default function Index() {
   return (
