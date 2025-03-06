@@ -1,3 +1,5 @@
+import { FieldMetadata } from "@conform-to/react";
+
 export interface RadioOption {
   id: string;
   value: string;
@@ -10,4 +12,17 @@ export interface FormFieldProps {
   type: string;
   placeholder: string;
   className?: string;
+  stringType: FieldMetadata<
+    string,
+    {
+      firstName: string;
+      lastName: string;
+      email: string;
+      phoneNumber: string;
+      subject: "general" | "support" | "billing" | "feedback";
+      message: string;
+    },
+    string[]
+  >;
+  error: string[] | undefined;
 }
