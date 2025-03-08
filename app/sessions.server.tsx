@@ -18,4 +18,5 @@ const sessionStorage = createCookieSessionStorage({
   },
 });
 
+// Use type assertion to resolve the type incompatibility
 export const themeSessionResolver = createThemeSessionResolver(sessionStorage);
