@@ -19,7 +19,7 @@ export interface FormFieldProps {
       lastName: string;
       email: string;
       phoneNumber: string;
-      subject: "general" | "support" | "billing" | "feedback";
+      subject: "general" | "val2" | "val3" | "val4";
       message: string;
     },
     string[]

@@ -10,7 +10,7 @@ export const meta: MetaFunction = () => {
 
 export default function Privacy() {
   return (
-    <div className="w-full h-screen p-3 bg-background">
+    <div className="w-full h-screen bg-background">
       <Header />
       <p>Privacy page</p>
     </div>

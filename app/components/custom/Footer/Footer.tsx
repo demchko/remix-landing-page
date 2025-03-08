@@ -1,10 +1,12 @@
-import { Link } from "@remix-run/react";
+import { Link, useFetcher } from "@remix-run/react";
 import {
   ContactDetail,
   contactDetails,
 } from "../ContactInformation/ContactInformation";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
+import { action } from "~/routes/_index";
+import { z } from "zod";
 
 const footerLinks = {
   company: [
@@ -64,67 +66,84 @@ const FooterSection = ({
   </div>
 );
 
-const NewsletterSubscription = () => (
-  <div className="flex flex-col justify-between bg-[#131313] rounded-lg p-4 w-full md:w-[300px]">
-    <h3 className="text-lg font-semibold mb-2">Join Our Newsletter</h3>
-    <div className="flex mb-2">
-      <Input
-        className="bg-[#1e1e1e] h-10 text-white"
-        placeholder="Your email address"
-        aria-label="Email address for newsletter"
-      />
-      <Button className="bg-black h-10 text-white border border-gray-700 hover:bg-gray-800 transition-colors">
-        Subscribe
-      </Button>
+export const schema = z.object({
+  email: z.string().email("Invalid email address"),
+});
+
+const NewsletterSubscription = () => {
+  const fetcher = useFetcher<typeof action>();
+
+  return (
+    <div className="flex flex-col justify-between bg-[#131313] rounded-lg p-4 w-full md:w-[300px]">
+      <h3 className="text-lg font-semibold mb-2">Join Our Newsletter</h3>
+      {
+        <fetcher.Form className="flex mb-2" method="post">
+          <input hidden name="intent" value="subscribe" readOnly />
+          <div>
+            <Input
+              name="email"
+              className="bg-[#1e1e1e] h-10 text-white"
+              placeholder="Your email address"
+              type="email"
+            />
+          </div>
+          <Button className="bg-black h-10 text-white border border-gray-700 hover:bg-gray-800 transition-colors">
+            Subscribe
+          </Button>
+        </fetcher.Form>
+      }
+      <p className="text-[#898989] text-xs">
+        * Will send you weekly updates for your better tool management.
+      </p>
     </div>
-    <p className="text-[#898989] text-xs">
-      * Will send you weekly updates for your better tool management.
-    </p>
-  </div>
-);
+  );
+};
 
 export const Footer = () => {
   return (
     <footer className="w-full bg-black py-4 px-4 md:px-8 text-white">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center md:text-left mb-8">
-          <p className="text-2xl md:text-[36px] font-bold text-white border-b border-white p-4 md:p-7 w-full text-center">
-            Logo Here
-          </p>
+      <div className="text-center md:text-left mb-8">
+        <p className="text-2xl md:text-[36px] font-bold text-white border-b border-white p-4 md:p-7 w-full text-center">
+          Logo Here
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 grid-rows-2 gap-6 md:flex md:justify-between">
+        <div className="flex flex-col gap-2 max-w-[300px]">
+          <h3 className="text-lg font-semibold mb-2">Reach us</h3>
+          <div className="flex flex-col gap-2">
+            {contactDetails.map((detail, index) => (
+              <ContactDetail
+                key={index}
+                Icon={detail.icon}
+                text={detail.text}
+                isFooter={true}
+              />
+            ))}
+          </div>
         </div>
 
-        <div className="flex flex-col md:flex-row md:flex-wrap lg:flex-nowrap gap-6 md:justify-between">
-          <div className="flex flex-col gap-2 max-w-[300px]">
-            <h3 className="text-lg font-semibold mb-2">Reach us</h3>
-            <div className="flex flex-col gap-2">
-              {contactDetails.map((detail, index) => (
-                <ContactDetail
-                  key={index}
-                  Icon={detail.icon}
-                  text={detail.text}
-                />
-              ))}
-            </div>
-          </div>
+        <FooterSection title="Company" links={footerLinks.company} />
+        <FooterSection
+          title="Legal"
+          links={footerLinks.legal}
+          isLinkComponent={false}
+        />
+        <FooterSection
+          title="Quick Links"
+          links={footerLinks.quickLinks}
+          isLinkComponent={false}
+        />
 
-          <FooterSection title="Company" links={footerLinks.company} />
-          <FooterSection
-            title="Legal"
-            links={footerLinks.legal}
-            isLinkComponent={false}
-          />
-          <FooterSection
-            title="Quick Links"
-            links={footerLinks.quickLinks}
-            isLinkComponent={false}
-          />
-
+        <div className="hidden md:block">
           <NewsletterSubscription />
         </div>
-
-        <div className="mt-8 pt-4 border-t border-gray-800 text-center text-sm text-gray-400">
-          <p>© {new Date().getFullYear()} Your Company. All rights reserved.</p>
-        </div>
+      </div>
+      <div className="block md:hidden">
+        <NewsletterSubscription />
+      </div>
+      <div className="mt-8 pt-4 border-t border-gray-800 text-center text-sm text-gray-400">
+        <p>© {new Date().getFullYear()} Your Company. All rights reserved.</p>
       </div>
     </footer>
   );

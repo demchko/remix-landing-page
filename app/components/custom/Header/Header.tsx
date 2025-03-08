@@ -2,9 +2,11 @@ import { Link } from "@remix-run/react";
 import {
   ClipboardListIcon,
   GlobeLock,
+  Menu,
   ShieldEllipsis,
   ShoppingCart,
   UserCircle,
+  XIcon,
 } from "lucide-react";
 import {
   NavigationMenu,
@@ -19,6 +21,14 @@ import { cn } from "~/lib/utils";
 import { FeatureLinkType, IconNavLinkType, NavLinkType } from "./types";
 import { BgSwitch } from "../BgSwitch";
 import { Theme, useTheme } from "remix-themes";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerFooter,
+  DrawerTrigger,
+} from "~/components/ui/drawer";
+import { Button } from "~/components/ui/button";
 
 const navLinks: NavLinkType[] = [
   { label: "Home", path: "/" },
@@ -53,22 +63,19 @@ const iconNavLinks: IconNavLinkType[] = [
 
 const NavLink = ({ label, path, isBold = false }: NavLinkType) => (
   <NavigationMenuItem>
-    <Link to={path}>
-      <NavigationMenuLink
-        className={cn(navigationMenuTriggerStyle(), isBold && "font-bold")}
-      >
-        {label}
-      </NavigationMenuLink>
+    <Link
+      to={path}
+      className={cn(navigationMenuTriggerStyle(), isBold && "font-bold")}
+    >
+      {label}
     </Link>
   </NavigationMenuItem>
 );
 
 const IconNavLink = ({ icon, path }: IconNavLinkType) => (
   <NavigationMenuItem>
-    <Link to={path}>
-      <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-        {icon}
-      </NavigationMenuLink>
+    <Link to={path} className={navigationMenuTriggerStyle()}>
+      {icon}
     </Link>
   </NavigationMenuItem>
 );
@@ -103,28 +110,79 @@ const FeaturesDropdown = () => (
 export const Header = () => {
   const [theme, setTheme] = useTheme();
   return (
-    <div className="w-full flex items-center justify-between px-12 py-4">
+    <div className="w-full flex items-center justify-between px-4 md:px-12 py-4">
       <p className="font-bold text-lg">Logo Here</p>
-      <NavigationMenu>
-        <NavigationMenuList>
-          <NavLink key={navLinks[0].path} {...navLinks[0]} />
-          <FeaturesDropdown />
-          {navLinks.slice(1).map((link) => (
-            <NavLink key={link.path} {...link} />
-          ))}
-          {iconNavLinks.map((link) => (
-            <IconNavLink key={link.path} {...link} />
-          ))}
-          <NavigationMenuItem>
-            <BgSwitch
-              checked={theme === "dark" ? true : false}
-              onCheckedChange={() =>
-                theme === "light" ? setTheme(Theme.DARK) : setTheme(Theme.LIGHT)
-              }
-            />
-          </NavigationMenuItem>
-        </NavigationMenuList>
-      </NavigationMenu>
+
+      <div className="md:hidden">
+        <Drawer direction="right">
+          <DrawerTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <Menu />
+            </Button>
+          </DrawerTrigger>
+          <DrawerContent className="text-white px-6 pb-8">
+            <div className="flex justify-between items-center">
+              <p className="text-lg font-bold">Logo Here</p>
+              <DrawerClose>
+                <Button variant="ghost" size="icon">
+                  <XIcon />
+                </Button>
+              </DrawerClose>
+            </div>
+            <div className="flex flex-col gap-8 mt-10">
+              <Link to="/">Home</Link>
+              <Link to="/features">Features</Link>
+              <Link to="/blog">Blog</Link>
+              <Link to="/shop">Shop</Link>
+              <Link to="/about">About</Link>
+              <Link to="/contact">Contact</Link>
+            </div>
+            <DrawerFooter className="w-full">
+              <div className="flex justify-center gap-6">
+                <Link to="/user">
+                  <UserCircle className="w-7 h-7" />
+                </Link>
+                <Link to="/cart">
+                  <ShoppingCart className="w-7 h-7" />
+                </Link>
+                <BgSwitch
+                  checked={theme === "dark"}
+                  onCheckedChange={() =>
+                    theme === "light"
+                      ? setTheme(Theme.DARK)
+                      : setTheme(Theme.LIGHT)
+                  }
+                />
+              </div>
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
+      </div>
+
+      <div className="hidden md:block">
+        <NavigationMenu>
+          <NavigationMenuList>
+            <NavLink key={navLinks[0].path} {...navLinks[0]} />
+            <FeaturesDropdown />
+            {navLinks.slice(1).map((link) => (
+              <NavLink key={link.path} {...link} />
+            ))}
+            {iconNavLinks.map((link) => (
+              <IconNavLink key={link.path} {...link} />
+            ))}
+            <NavigationMenuItem>
+              <BgSwitch
+                checked={theme === "dark"}
+                onCheckedChange={() =>
+                  theme === "light"
+                    ? setTheme(Theme.DARK)
+                    : setTheme(Theme.LIGHT)
+                }
+              />
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+      </div>
     </div>
   );
 };

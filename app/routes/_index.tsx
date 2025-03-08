@@ -18,32 +18,42 @@ export const meta: MetaFunction = () => {
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
-  const formValues = Object.fromEntries(formData);
-
-  try {
-    const validatedData = schema.parse(formValues);
-    return { success: true, email: validatedData.email };
-  } catch (error) {
-    if (error instanceof z.ZodError) {
+  const intent = formData.get("intent");
+  switch (intent) {
+    case "message": {
+      const formValues = Object.fromEntries(formData);
+      try {
+        const validatedData = schema.parse(formValues);
+        return { success: true, email: validatedData.email };
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          return {
+            success: false,
+            errors: error.format(),
+          };
+        }
+        return {
+          success: false,
+          errors: { _form: "Form submission failed" },
+        };
+      }
+    }
+    case "subscribe": {
+      console.log("Message sent");
       return {
-        success: false,
-        errors: error.format(),
+        success: true,
       };
     }
-    return {
-      success: false,
-      errors: { _form: "Form submission failed" },
-    };
   }
 }
 
 export default function Index() {
   return (
-    <div className="w-full bg-background h-full flex flex-col gap-6">
+    <div className="w-full bg-background h-full flex flex-col gap-6 min-w-[500px]">
       <Header />
       <ContactUs />
       <div className="w-full flex justify-center">
-        <div className="w-[85%] bg-background-block rounded-xl p-2 flex">
+        <div className="w-[85%] bg-background-block rounded-xl p-2 md:flex">
           <ContactInformation />
           <ContactForm />
         </div>

@@ -13,6 +13,7 @@ export interface SocialMediaType {
 export interface ContactDetailProps {
   Icon: LucideIcon;
   text: string;
+  isFooter?: boolean;
 }
 
 export interface SocialIconProps {
