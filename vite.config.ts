@@ -24,4 +24,20 @@ export default defineConfig({
     }),
     tsconfigPaths(),
   ],
+  // Add SSR configuration to handle external dependencies
+  ssr: {
+    noExternal: ["lucide-react", "@radix-ui/*"], // Bundle these into SSR build
+  },
+  // Optimize build process
+  build: {
+    // Limit parallel file operations to avoid EMFILE
+    rollupOptions: {
+      maxParallelFileOps: 10,
+    },
+    // Ensure proper minification and chunking
+    minify: "esbuild",
+    // Optional: Increase memory limit if needed (Vercel has a 4GB limit)
+    // Vercel auto-handles this, but good to know
+    // maxMemory: 4096,
+  },
 });
